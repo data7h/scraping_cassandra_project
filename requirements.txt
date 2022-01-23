@@ -1,0 +1,4 @@
+
+termcolor
+pandas
+cassandra-driver

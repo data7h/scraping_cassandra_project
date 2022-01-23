@@ -1,0 +1,96 @@
+# Configuration based on:
+# https://hub.docker.com/_/cassandra/
+
+# Ports:
+# 7000: intra-node communication
+# 7001: TLS intra-node communication
+# 7199: JMX
+# 9042: CQL
+# 9160: thrift service
+
+version: '2'
+
+services:
+  jupyterlab:
+    image: andreper/jupyterlab:3.0.0-spark-3.0.0
+    container_name: jupyterlab
+    ports:
+      - 8888:8888
+      - 4040:4040
+    volumes:
+      - /home/houcine/scraping_cassandra_project/workspace:/opt/workspace
+
+
+  cassandra-1:
+    image: cassandra:latest
+    container_name: cassandra-1
+    environment:
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_PASSWORD=cassandra
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_START_RPC=true
+      - LOCAL_JMX=no
+      - JVM_EXTRA_OPTS=-Dcom.sun.management.jmxremote.authenticate=false
+    volumes:
+      - /home/houcine/scraping_cassandra_project/cassandra_data-1:/var/lib/cassandra
+    ports:
+      - 7000:7000
+      - 7001:7001
+      - 7199:7199
+      - 19042:9042
+      - 9160:9160
+    networks:
+      - cassandra-1
+    networks:
+      - c-network
+      
+  cassandra-2:
+    image: cassandra:latest
+    container_name: cassandra-2
+    environment:
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_PASSWORD=cassandra
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_SEEDS=cassandra-1
+      - CASSANDRA_START_RPC=true
+      - JVM_EXTRA_OPTS=-Dcassandra.consistent.rangemovement=false
+    volumes:
+      - /home/houcine/scraping_cassandra_project/cassandra_data-2:/var/lib/cassandra
+    links:
+      - cassandra-1
+    networks:
+      - c-network
+
+  cassandra-3:
+    image: cassandra:latest
+    container_name: cassandra-3
+    environment:
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_PASSWORD=cassandra
+      - CASSANDRA_CLUSTER_NAME=cassandra-cluster
+      - CASSANDRA_SEEDS=cassandra-1
+      - CASSANDRA_START_RPC=true
+      - JVM_EXTRA_OPTS=-Dcassandra.consistent.rangemovement=false
+    volumes:
+      -  /home/houcine/scraping_cassandra_project/cassandra_data-3:/var/lib/cassandra
+    links:
+      - cassandra-1
+    networks:
+      - c-network
+volumes:
+  jupyterlab:
+    driver: local
+  cassandra_data-1:
+    driver: local
+  cassandra_data-2:
+    driver: local
+  cassandra_data-3:
+    driver: local
+
+
+networks:
+  c-network:
+    driver: bridge
+
+
+
