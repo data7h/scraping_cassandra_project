@@ -15,10 +15,6 @@ COPY --chown=houcine:houcine . .
 
 CMD ["python", "API_OpenWeatherMap-hs.py", "runserver", "127.0.0.1:8000"]
 
-
-
-
-
 # From the source image #python
 #FROM python:3.6-slim 
 # Identify maintainer

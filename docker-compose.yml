@@ -11,14 +11,14 @@
 version: '2'
 
 services:
-  jupyterlab:
-    image: andreper/jupyterlab:3.0.0-spark-3.0.0
-    container_name: jupyterlab
-    ports:
-      - 8888:8888
-      - 4040:4040
-    volumes:
-      - /home/houcine/scraping_cassandra_project/workspace:/opt/workspace
+  #jupyterlab:
+  #  image: andreper/jupyterlab:3.0.0-spark-3.0.0
+  #  container_name: jupyterlab
+  #  ports:
+  #    - 8888:8888
+  #    - 4040:4040
+  #  volumes:
+  #    - /home/houcine/scraping_cassandra_project/workspace:/opt/workspace
 
 
   cassandra-1:
@@ -78,8 +78,8 @@ services:
     networks:
       - c-network
 volumes:
-  jupyterlab:
-    driver: local
+  #jupyterlab:
+  #  driver: local
   cassandra_data-1:
     driver: local
   cassandra_data-2:
